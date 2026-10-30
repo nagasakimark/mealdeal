@@ -52,10 +52,10 @@ const CATS = [
 ];
 const NUT = [ // label rows: name, ja, index into n, daily reference intake
  {en:'Energy',ja:'エネルギー',i:0,ri:2000,u:'kcal'},
- {en:'Fat',ja:'脂質',i:1,ri:70,u:'g'},
- {en:'Saturates',ja:'飽和脂肪',i:2,ri:20,u:'g'},
- {en:'Sugars',ja:'糖類',i:4,ri:90,u:'g'},
- {en:'Salt',ja:'塩分',i:6,ri:6,u:'g'}
+ {en:'Fat',ja:'あぶら',i:1,ri:70,u:'g'},
+ {en:'Saturates',ja:'かたいあぶら',i:2,ri:20,u:'g'},
+ {en:'Sugars',ja:'さとう',i:4,ri:90,u:'g'},
+ {en:'Salt',ja:'しお',i:6,ri:6,u:'g'}
 ];
 const MISSIONS = [
  {icon:'🥗',en:'Light lunch',ja:'かるいランチ',d:'Under 600 kcal',dj:'600kcal未満',  v:t=>t.kcal,   ok:v=>v<600, f:v=>Math.round(v)+' kcal'},
@@ -298,8 +298,7 @@ function trafficLabel(x,y,w,h,vals,o={}){
   NUT.forEach((row,i)=>{ const v=vals[row.i], c=tl(row,v), cx=x+i*(cw+gap);
     ctx.fillStyle='rgba(19,35,91,.15)'; rr(cx,y+4,cw,h,cw/2.4); ctx.fill();
     ctx.fillStyle=c.bg; rr(cx,y,cw,h,cw/2.4); ctx.fill(); ctx.strokeStyle='#13235b'; ctx.lineWidth=2; rr(cx,y,cw,h,cw/2.4); ctx.stroke();
-    text(row.en,cx+cw/2,y+h*.2,{size:o.fs||15,weight:700,align:'center',max:cw-10});
-    text(row.ja,cx+cw/2,y+h*.33,{size:(o.fs||15)*.72,weight:800,align:'center',color:'#3b4a7a',max:cw-8});
+    text(row.ja,cx+cw/2,y+h*.24,{size:(o.fs||15)*1.05,weight:800,align:'center',max:cw-10});
     const vs = row.i===0 ? Math.round(v)+'' : (v<10? v.toFixed(1): Math.round(v)+'');
     text(vs+(row.i===0?'':row.u),cx+cw/2,y+h*.57,{size:(o.fs||15)*1.45,weight:700,align:'center',max:cw-8});
     if(row.i===0) text('kcal',cx+cw/2,y+h*.67,{size:(o.fs||15)*.8,weight:600,align:'center'});
@@ -386,7 +385,7 @@ SC.title = {
     ctx.save(); ctx.translate(1160,330); ctx.rotate(Math.sin(T*2)*.08); star(0,0,70,54,14,C.red,T*.2);
     text(yenN(jpy(dealPrice())),0,8,{size:34,weight:700,align:'center',color:'#fff'}); text(money(dealPrice()),0,32,{size:17,weight:700,align:'center',color:C.yellow}); ctx.restore();
     // modes
-    button('free',712,520,250,84,'Free shopping',{sub:'じゆうに買い物',bg:C.red,icon:'🛒',pulse:true,on:()=>{S.mission=null;startShop();}});
+    button('free',712,520,250,84,'Free shopping',{sub:'じゆうに かいもの',bg:C.red,icon:'🛒',pulse:true,on:()=>{S.mission=null;startShop();}});
     button('mis',974,520,250,84,'Missions',{sub:'ミッションにちょうせん',bg:C.blue,icon:'⭐',on:()=>go('missions')});
     button('sur',712,622,512,64,'Surprise me!',{sub:'おまかせで作る',bg:'#7c3aed',icon:'🎲',size:24,on:()=>surprise()});
     hud(false);
@@ -453,7 +452,7 @@ SC.aisle = {
     const ncols=Math.ceil(this.list.length/rows); this.F={FX,FY,FW,FH,rows,rh,cw,ncols};
     this.maxSx=Math.max(0,ncols*cw-FW);
     this.slots=this.list.map((it,i)=>{ const r=i%rows, col=Math.floor(i/rows);
-      return {it,col,x:FX+cw*(col+.5),shelf:FY+(r+1)*rh-40,mw:cw-24,mh:rh-72}; });
+      return {it,col,x:FX+cw*(col+.5),shelf:FY+(r+1)*rh-54,mw:cw-24,mh:rh-86}; });
   },
   inShelf(x,y){ const F=this.F; return F&&x>F.FX&&x<F.FX+F.FW&&y>F.FY&&y<F.FY+F.FH; },
   dragStart(x,y){ const F=this.F; this.pd=null; if(this.insp||TR.busy||!F) return; if(x>F.FX-20&&x<F.FX+F.FW+20&&y>F.FY-10&&y<F.FY+F.FH+30) this.pd={x0:x,y0:y,sx0:this.sx,on:false,samples:[{t:performance.now(),x}]}; },
@@ -584,14 +583,14 @@ SC.aisle = {
     ctx.fillStyle=c===1?'#5e432b':'#16233d'; ctx.fillRect(F.FX,y0+6,F.FW,20);
     text(['Chilled · れいぞう','Snacks · おかし','Cold drinks · つめたい飲み物'][c],F.FX+12,y0+22,{size:14,weight:700,color:c===1?'#ffe2b8':'#9fd7ff'});
     // shelves
-    for(let r=0;r<F.rows;r++){ const sy=F.FY+(r+1)*F.rh-40;
-      const g=ctx.createLinearGradient(0,sy-4,0,sy+8); g.addColorStop(0,'#fdfdfd'); g.addColorStop(1,'#9aa6b8'); ctx.fillStyle=g; ctx.fillRect(F.FX-8,sy-4,F.FW+16,10);
+    for(let r=0;r<F.rows;r++){ const sy=F.FY+(r+1)*F.rh-54;
+      const g=ctx.createLinearGradient(0,sy-4,0,sy+8); g.addColorStop(0,'#fdfdfd'); g.addColorStop(1,'#9aa6b8'); ctx.fillStyle=g; ctx.fillRect(F.FX,sy-4,F.FW,10);
       ctx.fillStyle=c===1?'#e9e2d3':'#dce4ee'; ctx.fillRect(F.FX,sy+6,F.FW,34); }
     // cold mist
     if(c!==1){ ctx.fillStyle='rgba(255,255,255,.18)'; for(let i=0;i<6;i++){ const mx=F.FX+((T*20+i*170)%F.FW); ctx.beginPath(); ctx.ellipse(mx,F.FY+F.FH-8,70,12,0,0,TAU); ctx.fill(); } }
   },
   glass(){ const F=this.F; ctx.save(); ctx.fillStyle='rgba(200,240,255,.08)'; ctx.fillRect(F.FX,F.FY,F.FW,F.FH);
-    fillRR(F.FX+10,F.FY+F.FH/2-70,10,140,5,'#c9d4e3'); fillRR(F.FX+F.FW-20,F.FY+F.FH/2-70,10,140,5,'#c9d4e3');
+    fillRR(F.FX-17,F.FY+F.FH/2-70,9,140,4.5,'#c9d4e3'); fillRR(F.FX+F.FW+8,F.FY+F.FH/2-70,9,140,4.5,'#c9d4e3');
     ctx.fillStyle='rgba(255,255,255,.13)'; [[90,160],[560,130]].forEach(([dx,w])=>{ ctx.beginPath(); ctx.moveTo(F.FX+dx,F.FY); ctx.lineTo(F.FX+dx+w,F.FY); ctx.lineTo(F.FX+dx+w-180,F.FY+F.FH); ctx.lineTo(F.FX+dx-180,F.FY+F.FH); ctx.closePath(); ctx.fill(); });
     ctx.restore(); },
   topbar(){
@@ -599,7 +598,7 @@ SC.aisle = {
     iconBtn('home',38,36,22,col=>{ ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(-11,-1); ctx.lineTo(0,-11); ctx.lineTo(11,-1); ctx.lineTo(8,-1); ctx.lineTo(8,10); ctx.lineTo(-8,10); ctx.lineTo(-8,-1); ctx.closePath(); ctx.fill(); },()=>go('title'),{bg:'#22346f',fg:'#fff'});
     const steps=[['Main','メイン'],['Snack','スナック'],['Drink','ドリンク'],['Pay','レジ']];
     steps.forEach((s,i)=>{ const x=300+i*170, done=i<this.c||(i<3&&S.picks[i]!==null), now=i===this.c;
-      if(i) { ctx.fillStyle=i<=this.c?C.good:'#2d4183'; ctx.fillRect(x-150,34,130,6); }
+      if(i) { ctx.fillStyle=i<=this.c?C.good:'#2d4183'; ctx.fillRect(x-170+96,34,170-96-28,6); }
       circle(x,37,now?24:19,now?C.yellow:done?C.good:'#2d4183');
       text(done&&!now?'✓':String(i+1),x,37+(now?9:7),{size:now?24:19,weight:700,align:'center',color:now?C.ink:'#fff'});
       text(s[0],x+30,33,{size:17,weight:700,color:now?'#fff':'#9fb3e8'}); text(s[1],x+30,52,{size:12,weight:800,color:now?C.yellow:'#7187c7'}); });
@@ -632,7 +631,7 @@ SC.aisle = {
       fillRR(x+14,my+64,w-28,30,15,t.count?(ok?C.good:'#b91c1c'):'#2d4183');
       text(t.count?(ok?'✓ ':'✗ ')+m.f(v):'Now: — ',x+w/2,my+85,{size:16,weight:700,align:'center',color:'#fff',max:w-40}); }
     else { fillRR(x,my,w,104,20,'#13235b'); text('👆',x+18,my+50,{size:30});
-      text('Tap an item',x+64,my+46,{size:22,weight:700,color:'#fff'}); text('タップでくわしく見る',x+64,my+72,{size:14,weight:800,color:C.yellow}); }
+      text('Tap an item',x+64,my+46,{size:22,weight:700,color:'#fff'}); text('タップで くわしく みる',x+64,my+72,{size:14,weight:800,color:C.yellow}); }
     // nav
     const has=S.picks[c]!==null;
     button('back',x,618,76,70,'‹',{bg:'#fff',fg:C.ink,size:44,r:20,on:()=>{ if(c===0) go('title'); else go('aisle',c-1); }});
@@ -671,24 +670,24 @@ SC.aisle = {
     text(it.ja,RX,yy,{size:24,weight:800,color:C.muted,max:RW}); yy+=34;
     let px=0; if(it.sz){ font(16,700); const zw=Math.max(60,ctx.measureText(it.sz).width+28); fillRR(RX,yy-6,zw,30,15,'#eef3fa'); text(it.sz,RX+zw/2,yy+15,{size:16,weight:700,align:'center'}); px=zw+10; }
     fillRR(RX+px,yy-6,170,30,15,'#fff4c2'); text('Meal Deal ✓',RX+px+85,yy+15,{size:15,weight:700,align:'center',color:'#7a5c00'});
-    px+=180; fillRR(RX+px,yy-6,RW-px,30,15,'#dcf5f1'); text('💪 たんぱく質 '+it.n[5]+'g',RX+px+(RW-px)/2,yy+15,{size:14,weight:700,align:'center',color:'#0b5f57',max:RW-px-10});
+    px+=180; fillRR(RX+px,yy-6,RW-px,30,15,'#dcf5f1'); text('💪 たんぱくしつ '+it.n[5]+'g',RX+px+(RW-px)/2,yy+15,{size:14,weight:700,align:'center',color:'#0b5f57',max:RW-px-10});
     if(!o.nut){
-      fillRR(RX,Y+190,RW,150,26,'#f3f7fd'); ctx.strokeStyle='#d5deec'; ctx.lineWidth=3; rr(RX,Y+190,RW,150,26); ctx.stroke();
-      const pw=text(yen(it.p),RX+RW/2-28,Y+292,{size:84,weight:700,align:'center',color:C.red}); text(money(it.p),RX+RW/2-28+pw/2+34,Y+292,{size:30,weight:700,align:'left',color:C.muted});
-      button('nutbtn',RX,Y+362,RW,66,'Nutrition  ▾',{sub:'えいようを見る',bg:C.blue,size:24,r:20,on:()=>{ o.nut=true; }});
+      const cy0=yy+34; fillRR(RX,cy0,RW,128,26,'#f3f7fd'); ctx.strokeStyle='#d5deec'; ctx.lineWidth=3; rr(RX,cy0,RW,128,26); ctx.stroke();
+      font(76,700); const pw=ctx.measureText(yen(it.p)).width; const gx=RX+RW/2-(pw+110)/2; text(yen(it.p),gx,cy0+88,{size:76,weight:700,color:C.red}); text(money(it.p),gx+pw+14,cy0+88,{size:28,weight:700,color:C.muted});
+      button('nutbtn',RX,cy0+146,RW,64,'えいようを みる',{bg:C.blue,size:26,r:20,on:()=>{ o.nut=true; }});
     } else {
-      text('Nutrition',RX,Y+252,{size:19,weight:700}); text('1パックぜんぶの栄養',RX+110,Y+252,{size:14,weight:800,color:C.muted});
-      button('nutbtn',RX+RW-124,Y+228,124,34,'Close ▴',{size:15,bg:'#eef3fa',fg:C.ink,r:17,on:()=>{ o.nut=false; }});
+      text('えいよう',RX,Y+252,{size:22,weight:800}); text('1パックぜんぶ',RX+104,Y+252,{size:14,weight:800,color:C.muted});
+      button('nutbtn',RX+RW-140,Y+226,140,38,'とじる ▴',{size:18,bg:'#eef3fa',fg:C.ink,r:19,on:()=>{ o.nut=false; }});
       trafficLabel(RX,Y+270,RW,150,it.n,{fs:16});
       const tsp=it.n[4]/4;
-      text('Sugar',RX,Y+466,{size:20,weight:700}); text('砂糖',RX+60,Y+466,{size:14,weight:800,color:C.muted});
-      const nC=Math.min(Math.round(tsp),14); for(let i=0;i<nC;i++) sugarCube(RX+100+i*22,Y+446,19);
-      text(nC?'= 小さじ'+tsp.toFixed(1)+'杯':'ほとんどなし',RX+(nC?108+nC*22:100),Y+465,{size:16,weight:700,color:C.ink,max:Math.max(90,RW-110-nC*22)});
+      text('さとう',RX,Y+466,{size:20,weight:800});
+      const nC=Math.min(Math.round(tsp),14); for(let i=0;i<nC;i++) sugarCube(RX+80+i*22,Y+446,19);
+      text(nC?'= 小さじ'+tsp.toFixed(1)+'杯':'ほとんどなし',RX+(nC?84+nC*22:84),Y+465,{size:16,weight:700,color:C.ink,max:Math.max(90,RW-96-nC*22)});
     }
     // buttons
     const picked=S.picks[it.c]===ITEMS.indexOf(it);
-    if(picked) { fillRR(RX,Y+PH-82,RW,62,18,'#d8f7df'); text('✓ かごに入れたよ',RX+RW/2,Y+PH-42,{size:23,weight:700,align:'center',color:'#13692f'}); }
-    else button('choose',RX,Y+PH-82,RW,62,S.picks[it.c]!==null?'Swap':'Put in basket',{sub:S.picks[it.c]!==null?'これにかえる':'かごに入れる',bg:C.red,size:24,r:18,pulse:true,on:()=>this.choose(it)});
+    if(picked) { fillRR(RX,Y+PH-82,RW,62,18,'#d8f7df'); text('✓ かごに いれたよ',RX+RW/2,Y+PH-42,{size:23,weight:700,align:'center',color:'#13692f'}); }
+    else button('choose',RX,Y+PH-82,RW,62,S.picks[it.c]!==null?'Swap':'Put in basket',{sub:S.picks[it.c]!==null?'これにかえる':'かごに いれる',bg:C.red,size:24,r:18,pulse:true,on:()=>this.choose(it)});
     iconBtn('close',X+PW-32,Y+32,22,col=>{ ctx.strokeStyle=col; ctx.lineWidth=4; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(-7,-7); ctx.lineTo(7,7); ctx.moveTo(7,-7); ctx.lineTo(-7,7); ctx.stroke(); },()=>this.closeInsp(),{bg:'#eef3fa'});
     ctx.restore();
   }
